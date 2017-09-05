@@ -5,25 +5,22 @@
 
 using namespace std;
 
-bool Inputfile::Read(std::string filename)
+bool Inputfile::Read(const std::string& filename)
 {
-	char output[100];
-	std::ifstream _archivo;
-	std::string a, b;
-	_archivo.open(filename);
-	if (_archivo.fail()) {
+	if (filename.empty() ){
+		std::cout << "No Filename provided" << std::endl;
 		return false;
 	}
-	else
-	{
-		while (std::getline(_archivo, a)) {
-			b += a;
-			b += "\n";
 
-		}
-		_archivo.close();
-		_contents = b;
+	std::fstream inputFile(filename, std::fstream::in);
+	if (!inputFile.is_open())
+	{
+		std::cout << "could not open file" << filename << std::endl;
+		return false;
 	}
+	std::stringstream ss;
+	ss << inputFile.rdbuf();
+	_contents = ss.str();
 	return true;
 }
 
@@ -31,5 +28,3 @@ std::string Inputfile::GetContents()
 {
 	return _contents;
 }
-
-
