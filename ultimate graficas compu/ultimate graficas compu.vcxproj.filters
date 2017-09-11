@@ -51,5 +51,11 @@
     <None Include="Default.frag">
       <Filter>Archivos de recursos\Shaders</Filter>
     </None>
+    <None Include="DiscardCenter.vert">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="DiscardCenter.frag">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
