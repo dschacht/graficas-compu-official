@@ -11,8 +11,6 @@ GLuint vao;
 // Identifcador del manager de los shaders (shaderProgram)
 GLuint shaderProgram;
 
-float vertsPerFrame = 0.0f;
-float delta = 0.41f;
 
 void Initialize()
 {
@@ -22,25 +20,36 @@ void Initialize()
 	// Lista de vec2
 	// Claramente en el CPU y RAM
 	std::vector<glm::vec2> positions;
+	positions.push_back(glm::vec2(0.0f, 1.0f));//0
+	positions.push_back(glm::vec2(0.0f, 0.5f));//1
+	positions.push_back(glm::vec2(0.95f, 0.3f));//2
+	positions.push_back(glm::vec2(0.5f,0.15f));//3
+	positions.push_back(glm::vec2(0.6f, -0.8f));//4
+	positions.push_back(glm::vec2(0.3f, -0.4f));//5
+	positions.push_back(glm::vec2(-0.6f, -0.8f));//6
+	positions.push_back(glm::vec2(-0.3f, -0.4f));//7
+	positions.push_back(glm::vec2(-0.95f, 0.3f));//8
+	positions.push_back(glm::vec2(-0.5f, 0.15f));//9
+	positions.push_back(glm::vec2(0.0f, 1.0f));//10
+	positions.push_back(glm::vec2(0.0f, 0.5f));//11
+	
+
+
 	// Arreglo de colores en el cpu
 	std::vector<glm::vec3> colors;
-
-	positions.push_back(glm::vec2(0.0f, 0.0f));
-	colors.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
-	for (float i = 0.0f; i <= 360.0f; i += 1.0f)
-	{
-		positions.push_back(
-			glm::vec2(
-				glm::cos(glm::radians(i)),
-				glm::sin(glm::radians(i))
-			));
-		colors.push_back(
-			glm::vec3(
-				glm::cos(glm::radians(i)),
-				glm::sin(glm::radians(i)),
-				glm::cos(glm::radians(i)) * glm::sin(glm::radians(i))
-			));
-	}
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	
 
 	// Queremos generar 1 manager
 	glGenVertexArrays(1, &vao);
@@ -145,15 +154,13 @@ void GameLoop()
 	// VBOs asociados automáticamente.
 	glBindVertexArray(vao);
 	// Función de dibujado sin indices.
-	glDrawArrays(GL_TRIANGLE_FAN, 0, 362.0f);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 12);
 	// Terminamos de utilizar el manager
 	glBindVertexArray(0);
 	// Desactivamos el manager
 	glUseProgram(0);
 
-	vertsPerFrame += delta;
-	if (vertsPerFrame < 0.0f || vertsPerFrame >= 380.0f)
-		delta *= -1.0f;
+	
 
 	// Cuando terminamos de renderear, cambiamos los buffers.
 	glutSwapBuffers();
@@ -170,7 +177,7 @@ void Idle()
 
 void ReshapeWindow(int width, int height)
 {
-	glViewport(0, 0, width/2, height);
+	glViewport(0, 0, width, height);
 	
 }
 
@@ -216,6 +223,15 @@ int main(int argc, char* argv[])
 	// Configurar OpenGL. Este es el color por default del buffer de color
 	// en el framebuffer.
 	glClearColor(1.0f, 1.0f, 0.5f, 1.0f);
+
+	// Ademas de solicitar el buffer de profundidad, tenemos
+	// que decirle a OpenGL que lo queremos activo
+	glEnable(GL_DEPTH_TEST);
+	// Activamos el borrado de caras traseras.
+	// Ahora todos los triangulos que dibujemos deben estar en CCW
+	glEnable(GL_CULL_FACE);
+	// No dibujar las caras traseras de las geometrías.
+	glCullFace(GL_BACK);
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
