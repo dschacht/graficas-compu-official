@@ -5,10 +5,11 @@
 #include <vector>
 #include "Mesh.h"
 #include "ShaderProgram.h"
+#include "Transform.h"
 
 Mesh _mesh;
 ShaderProgram _shaderProgram;
-
+Transform _transform;
 
 void Initialize()
 {
@@ -60,7 +61,7 @@ void Initialize()
 	_shaderProgram.SetAttribute(1, "VertexColor");
 	_shaderProgram.LinkProgram();
 
-
+	_transform.SetRotation(0.0f, 0.0f, 90.0f);
 
 }
 
@@ -70,8 +71,10 @@ void GameLoop()
 	// Siempre hacerlo al inicio del frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	_transform.Rotate(0.0f, 1.0f, 0.0f, false);
 
 	_shaderProgram.Activate();
+	_shaderProgram.SetUniformMatrix("modelMatrix", _transform.GetModelMatrix());
 	_mesh.Draw(GL_TRIANGLE_STRIP);
 	_shaderProgram.Deactivate();
 

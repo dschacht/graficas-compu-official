@@ -34,7 +34,7 @@ private:
 
 	void UpdateLocalVectors();
 	void UpdateModelMatrixPosition();
-	void UpdaeModelMatrixRotationScale();
+	void UpdateModelMatrixRotationScale();
 
 	glm::mat4 _modelMatrix;
 
