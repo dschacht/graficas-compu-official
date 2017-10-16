@@ -31,7 +31,7 @@ void Mesh::Draw(GLenum primitive)
 	glBindVertexArray(_vertexArrayObject);
 
 	if (_indicesCount > 0)
-		glDrawElements(primitive, _indicesCount, GL_UNSIGNED_BYTE, (GLvoid*)0);
+		glDrawElements(primitive, _indicesCount, GL_UNSIGNED_INT, nullptr);
 
 	else
 	glDrawArrays(primitive, 0, _vertexCount);
@@ -72,10 +72,10 @@ void Mesh::SetIndices(std::vector<int unsigned> indices, GLenum usage)
 	if (_indicesBufferObject != 0)
 		glDeleteBuffers(1, &_indicesBufferObject);
 
-	glBindVertexArray(_positionsVertexBufferObject);
-	glBindVertexArray(_colorsVertexBufferObject);
+	//glBindVertexArray(_positionsVertexBufferObject);
+	//glBindVertexArray(_colorsVertexBufferObject);
 	glBindVertexArray(_vertexArrayObject);
-	glBindVertexArray(_indicesBufferObject);
+	//glBindVertexArray(_indicesBufferObject);
 
 	glGenBuffers(1, &_indicesBufferObject);
 
