@@ -11,6 +11,10 @@
 Mesh _mesh;
 ShaderProgram _shaderProgram;
 Transform _transform;
+Transform _transform2;
+Transform _transform3;
+Transform _transform4;
+Transform _transform5;
 Camera _camera;
 
 void Initialize()
@@ -114,7 +118,14 @@ void Initialize()
 
 	_transform.SetRotation(90.0f, 90.0f, 90.0f);
 
-	_camera.MoveForward(25.0f);
+	_transform.Translate(40.0f, 6.0f, -21.0f, false);
+	_transform2.Translate(-20.0f, 6.0f, 30.0f, false);
+	_transform3.Translate(37.0f, 6.0f, 20.0f, false);
+	_transform4.Translate(37.0f, 18.0f, 20.0f, false);
+	_transform5.Translate(34.0f, -20.0f, -33.0f, false);
+
+	_transform5.SetScale(-32.0f, 0.0f, -45.0f);
+	//_camera.MoveForward(60.0f);
 
 }
 
@@ -124,13 +135,55 @@ void GameLoop()
 	// Siempre hacerlo al inicio del frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//_camera.MoveForward(.01f);
+	_camera.Rotate(0.0f,1.0f,0.0f,false);
 
-	_transform.Rotate(0.0f, 1.0f, 0.5f, false);
+	_transform.Rotate(1.0f, 0.0f, 0.0f, false);
+	_transform2.Rotate(0.0f, 0.0f, 1.0f, false);
+	_transform3.Rotate(0.0f, -1.0f, 0.0f, false);
+	_transform4.Rotate(0.0f, 1.0f, 0.0f, false);
+	_transform5.Rotate(0.0f, 0.0f, 0.0f, false);
 
+
+	
+
+	
+	//activar shader
 	_shaderProgram.Activate();
+	//mandar informacion al shader
 	_shaderProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*_transform.GetModelMatrix());
+	//dibujamos
 	_mesh.Draw(GL_TRIANGLES);
+
+	_shaderProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*_transform2.GetModelMatrix());
+	_mesh.Draw(GL_TRIANGLES);
+
+	_shaderProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*_transform3.GetModelMatrix());
+	_mesh.Draw(GL_TRIANGLES);
+
+
+	_shaderProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*_transform4.GetModelMatrix());
+	_mesh.Draw(GL_TRIANGLES);
+
+
+
+	_shaderProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*_transform5.GetModelMatrix());
+	_mesh.Draw(GL_TRIANGLES);
+	
+	glClearColor(1.0f, 1.0f, 0.5f, 1.0f);
+	float i = 0.0f;
+	for (float i = 0.0f; i<1; i=i+0.001f) {
+		
+		glClearColor(
+			glm::cos(glm::radians(i)),
+			glm::sin(glm::radians(i)),
+			glm::cos(glm::radians(i)) * glm::sin(glm::radians(i)), 1.0f)
+			;
+
+		
+	}
+
+	
+//borramos el mesh
 	_shaderProgram.Deactivate();
 
 	// Cuando terminamos de renderear, cambiamos los buffers.
@@ -192,7 +245,7 @@ int main(int argc, char* argv[])
 
 	// Configurar OpenGL. Este es el color por default del buffer de color
 	// en el framebuffer.
-	glClearColor(1.0f, 1.0f, 0.5f, 1.0f);
+	
 	// Ademas de solicitar el buffer de profundidad, tenemos
 	// que decirle a OpenGL que lo queremos activo
 	glEnable(GL_DEPTH_TEST);
