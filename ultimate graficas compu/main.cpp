@@ -1,137 +1,135 @@
+/*********
+Kevin Asaf Alvarez Villarruel A01376017
+Isaac Hinojosa Padilla A01375843
+Daniel Schacht Luna A01169574
+******/
+
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <iostream>
 #include <glm/glm.hpp>
 #include <vector>
+#include "Camera.h"
 #include "Mesh.h"
 #include "ShaderProgram.h"
 #include "Transform.h"
-#include "Camera.h"
 
 Mesh _mesh;
 ShaderProgram _shaderProgram;
 Transform _transform;
-Transform _transform2;
-Transform _transform3;
-Transform _transform4;
-Transform _transform5;
+Transform _transform1;
+
 Camera _camera;
+
+
+float i = 0.0f;
+float ii = 0.0f;
+bool limite = true;
 
 void Initialize()
 {
-	// Creando toda la memoria que el programa va a utilizar.
-
-	// Creación del atributo de posiciones de los vértices.
-	// Lista de vec2
-	// Claramente en el CPU y RAM
 	std::vector<glm::vec3> positions;
-	std::vector<unsigned int> indices = {
-		0,  2,  1,  0,  3,  2,   //base
-		0,  3,  4,  0,  4,  3,   //front
-		3,  2,  4, 3,  4, 2,  //right
-		2, 1, 4, 2, 4, 1,  //back
-		1, 0, 1, 1, 4, 0,  //left
 
-	};
-							
-	//base				
-	positions.push_back(glm::vec3(-1.0f, -1.0f, 1.0f));//0
-	positions.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));//1
-	positions.push_back(glm::vec3(1.0f,-1.0f, -1.0f));//2
-	positions.push_back(glm::vec3(1.0f, -1.0f, 1.0f));//3
+	//Triangulo
+	positions.push_back(glm::vec3(0.0f, 1.0f, 0.0f)); //0
+	positions.push_back(glm::vec3(-1.0f, -1.0f, 1.0f)); //1
+	positions.push_back(glm::vec3(1.0f, -1.0f, 1.0f)); //2
+	positions.push_back(glm::vec3(1.0, -1.0f, -1.0f)); //3
+	positions.push_back(glm::vec3(-1.0f, -1.0f, -1.0f));//4
 
-    //front
-	positions.push_back(glm::vec3(0.0f, 1.0f, 0.0f));//4
-	
-
-
-											   // Arreglo de colores en el cpu
+														// Arreglo de colores en el cpu
 	std::vector<glm::vec3> colors;
-	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f)); //0
-	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));//1
-	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));//2
-	colors.push_back(glm::vec3(0.0f, 0.0f, 0.0f));//3
-	
-	colors.push_back(glm::vec3(0.0f, 1.0f, 1.0f));//4
-	
+
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
+	colors.push_back(glm::vec3(0.0f, 0.0f, 0.0f));
+
+	std::vector<unsigned int> indices = { 0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1, 1, 4, 3, 1, 3, 2 };
+
+
 	_mesh.CreateMesh(5);
+	_mesh.SetIndices(indices, GL_STATIC_DRAW);
 
 	_mesh.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
-	_mesh.SetIndices(indices, GL_STATIC_DRAW);
 	_mesh.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
+
 	_shaderProgram.CreateProgram();
 	_shaderProgram.AttachShader("Default.vert", GL_VERTEX_SHADER);
 	_shaderProgram.AttachShader("Default.frag", GL_FRAGMENT_SHADER);
 	_shaderProgram.SetAttribute(0, "VertexPosition");
 	_shaderProgram.SetAttribute(1, "VertexColor");
 	_shaderProgram.LinkProgram();
-	
-	_transform2.SetScale(0.5f, 0.5f, 0.5f);
-	//_transform.SetRotation(90.0f, 90.0f, 90.0f);
-
-	//_transform.Translate(40.0f, 6.0f, -21.0f, false);
-	//_transform2.Translate(-20.0f, 6.0f, 30.0f, false);
-	_transform.SetScale(3.0f,3.0f,3.0f);
-	//_transform2.SetScale(0.5f, 0.5f, 0.5f);
-
-	//_transform.SetPosition(0.0f, 0.0f, 0.0f);
 
 
-	_camera.SetPosition(0.0f, 0.0f, 25.0f);
-	//_camera.MoveForward(60.0f);
-	
-
-
+	//Piramide grande
+	_transform.SetScale(3.0f, 3.0f, 3.0f);
 }
 
 void GameLoop()
 {
+
+
+
 	// Limpiamos el buffer de color y el buffer de profunidad.
 	// Siempre hacerlo al inicio del frame
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	
+	_camera.SetPosition(0.0f, 0.0f, 25.0f);
+
+
+	//_camera.MoveForward(0.0001f)
+
+
+
 
 	_transform.Rotate(1.0f, 1.0f, 1.0f, true);
-	_transform2.Rotate(-1.0f, -1.0f, -1.0f, false);
 
-	float i = 0.0f;
 	float r = 5.0f;
-	float tetha = glm::radians(i), x = r*(glm::cos(tetha)), y = r* (glm::sin(tetha)), z = 0.0f;
+	float tetha = glm::radians(i), x = r*(glm::cos(tetha)), y = r*(glm::sin(tetha)), z = 0.0f;
 
 	_transform.SetPosition(x, y, z);
 	i = i + 1.0f;
-	
-	//_transform2.SetScale(1.0f, 1.0f, 1.0f);
-	
-	float s = 0.5f;
-	
-	_transform2.SetScale(s, s, s);
 
-	if (s < 1.0f) {
-		s = s + 1.0f;
-		_transform2.SetScale(s, s, s);
-	}
-	else
+	_shaderProgram.Activate(); //mandar informacion, activar shader
+
+	_shaderProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection() * _transform.GetModelMatrix()); //getmodelmatrix, donde esta que escala tiene que rotacion tiene
+	_mesh.Draw(GL_TRIANGLES); //instruccion de dibujado, para hacer una nueva figura se debe usar otro draw
+
+							  //segundo triangulo
+	_shaderProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection() * _transform1.GetModelMatrix());
+	_mesh.Draw(GL_TRIANGLES);
+
+	_transform1.Rotate(-1.0f, -1.0f, -1.0f, true);
+
+	float size = 0.5f + ii;
+
+
+	if (size <= 1.0f & limite == true)
 	{
-		s = s - 1.0f;
-		_transform2.SetScale(s, s, s);
+		_transform1.SetScale(size, size, size);
+		ii = ii + 0.005f;
 	}
-	
-	
-	//activar shader
-	_shaderProgram.Activate();
-	//mandar informacion al shader
-	_shaderProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*_transform.GetModelMatrix());
-	//dibujamos
-	_mesh.Draw(GL_TRIANGLES);
+	else if (size >= 1.0f & limite == true)
+	{
+		limite = false;
+	}
+	else if (size >= 0.25f & limite == false)
+	{
+		_transform1.SetScale(size, size, size);
+		ii = ii - 0.005f;
+	}
+	else if (size <= 0.25f & limite == false)
+	{
+		limite = true;
+	}
 
-	_shaderProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*_transform2.GetModelMatrix());
-	_mesh.Draw(GL_TRIANGLES);
 
-	
-	
-//borramos el mesh
+
+
+
+
 	_shaderProgram.Deactivate();
 
 	// Cuando terminamos de renderear, cambiamos los buffers.
@@ -173,7 +171,7 @@ int main(int argc, char* argv[])
 	// true color RGBA, un buffer de profundidad y un segundo buffer para renderear.
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
 	// Iniciar las dimensiones de la ventana (en pixeles)
-	glutInitWindowSize(400, 400);
+	glutInitWindowSize(500, 500);
 	// Creamos la ventana y le damos un título.
 	glutCreateWindow("Hello World GL");
 	// Asociamos una función de render.
