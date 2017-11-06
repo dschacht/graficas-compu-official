@@ -87,5 +87,11 @@
     <None Include="DiscardCenter.frag">
       <Filter>Archivos de recursos\Shaders</Filter>
     </None>
+    <None Include="Phong.frag">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="Phong.vert">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
