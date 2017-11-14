@@ -3,7 +3,8 @@
 in vec3 VertexPosition;
 in vec3 VertexColor;
 in vec3 VertexNormals;
-
+in vec2 VertexTexCoord;
+out vec2 InterpolatedTexCoord;
 out vec3 InterpolatedNormals;
 out vec3 PixelPosition;
 out vec3 InterpolatedColor;
@@ -21,4 +22,6 @@ void main()
   InterpolatedColor = VertexColor;
   gl_Position = mvpMatrix *vec4(VertexPosition, 1.0f);
   InterpolatedNormals= normalsMatrix *VertexNormals;
+  
+  InterpolatedTexCoord = VertexTexCoord;
 }

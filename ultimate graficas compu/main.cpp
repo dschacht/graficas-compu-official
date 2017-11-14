@@ -1,10 +1,6 @@
-/*********
-Kevin Asaf Alvarez Villarruel A01376017
-Isaac Hinojosa Padilla A01375843
-Daniel Schacht Luna A01169574
 
-******/
 
+#include <IL/il.h>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <iostream>
@@ -14,12 +10,15 @@ Daniel Schacht Luna A01169574
 #include "Mesh.h"
 #include "ShaderProgram.h"
 #include "Transform.h"
+#include "Texture2D.h"
 
 Mesh _mesh;
 ShaderProgram _shaderProgram;
 Transform _transform;
 Transform _transform1;
 Camera _camera;
+Texture2D myTexture;
+Texture2D floorTexture;
 
 void Initialize()
 {
@@ -128,6 +127,41 @@ void Initialize()
 	Normals.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
 	Normals.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
 
+
+	std::vector<glm::vec2> texCoords;
+
+	texCoords.push_back(glm::vec2(0.0f, 0.0f )); //0
+	texCoords.push_back(glm::vec2(1.0f, 0.0f )); //1
+	texCoords.push_back(glm::vec2(1.0f, 1.0f)); //2
+	texCoords.push_back(glm::vec2(0.0, 1.0f)); //3
+
+													  //Derecha
+	texCoords.push_back(glm::vec2(0.0f, 0.0f)); //0
+	texCoords.push_back(glm::vec2(1.0f, 0.0f)); //1
+	texCoords.push_back(glm::vec2(1.0f, 1.0f)); //2
+	texCoords.push_back(glm::vec2(0.0, 1.0f)); //3
+
+	texCoords.push_back(glm::vec2(0.0f, 0.0f)); //0
+	texCoords.push_back(glm::vec2(1.0f, 0.0f)); //1
+	texCoords.push_back(glm::vec2(1.0f, 1.0f)); //2
+	texCoords.push_back(glm::vec2(0.0, 1.0f)); //3
+														//Atras 
+	texCoords.push_back(glm::vec2(0.0f, 0.0f)); //0
+	texCoords.push_back(glm::vec2(1.0f, 0.0f)); //1
+	texCoords.push_back(glm::vec2(1.0f, 1.0f)); //2
+	texCoords.push_back(glm::vec2(0.0, 1.0f)); //3
+													   //Arriba 
+	texCoords.push_back(glm::vec2(0.0f, 0.0f)); //0
+	texCoords.push_back(glm::vec2(1.0f, 0.0f)); //1
+	texCoords.push_back(glm::vec2(1.0f, 1.0f)); //2
+	texCoords.push_back(glm::vec2(0.0, 1.0f)); //3
+														//Abajo
+	texCoords.push_back(glm::vec2(0.0f, 0.0f)); //0
+	texCoords.push_back(glm::vec2(1.0f, 0.0f)); //1
+	texCoords.push_back(glm::vec2(1.0f, 1.0f)); //2
+	texCoords.push_back(glm::vec2(0.0, 1.0f)); //3
+
+
 	std::vector<unsigned int> indices = { 0,1,2,0,2,3,
 		4,5,6,4,6,7,
 		8,9,10,8,10,11,
@@ -141,28 +175,35 @@ void Initialize()
 	_mesh.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
 	_mesh.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
 	_mesh.SetNormalsAttribute(Normals, GL_STATIC_DRAW, 2);
+	_mesh.SetTexCoordAttribute(texCoords, GL_STATIC_DRAW, 3);
 	_shaderProgram.CreateProgram();
 	_shaderProgram.AttachShader("Phong.vert", GL_VERTEX_SHADER);
 	_shaderProgram.AttachShader("Phong.frag", GL_FRAGMENT_SHADER);
 	_shaderProgram.SetAttribute(0, "VertexPosition");
 	_shaderProgram.SetAttribute(1, "VertexColor");
 	_shaderProgram.SetAttribute(2, "VertexNormals");
+	_shaderProgram.SetAttribute(3, "VertexTexCoord");
 
+	myTexture.Loadtexture("caja.jpg");
+
+	floorTexture.Loadtexture("piso.jpg");
 
 	_shaderProgram.LinkProgram();
 	_shaderProgram.Deactivate();
 
 	_shaderProgram.Activate();
 	_shaderProgram.SetUniformVec3("LightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	_shaderProgram.SetUniformVec3("LightPosition", glm::vec3(0.0f, 1.0f, 5.0f));
+	_shaderProgram.SetUniformVec3("LightPosition", glm::vec3(1.0f, 1.0f, 5.0f));
+	_shaderProgram.SetUniformi("DiffuseTexture", 0);
+
 	_shaderProgram.Deactivate();
 
 	//primer cubo
 	_transform.SetScale(1.0f, 1.0f, 1.0f);
 	//segundo cubo 
-	_transform1.Translate(0.0f, -5.0f, 0.0f, false);
+	_transform1.Translate(0.0f, -10.0f, 0.0f, false);
 
-	_transform1.SetScale(300.0f, 0.0f, 300.0f);
+	_transform1.SetScale(15.0f, 0.2f, 15.0f);
 
 }
 
@@ -178,6 +219,12 @@ void GameLoop()
 
 	_transform.Rotate(0.3f, 0.3f, 0.3f, true);
 	_shaderProgram.Activate(); //mandar informacion, activar shader
+	
+
+	
+
+	glActiveTexture(GL_TEXTURE0);
+	myTexture.Bind();
 
 
 							   //cubo chico
@@ -188,13 +235,23 @@ void GameLoop()
 	_shaderProgram.SetUniformMatrix("ModelMatrix", _transform.GetModelMatrix());
 	_mesh.Draw(GL_TRIANGLES); //instruccion de dibujado, para hacer una nueva figura se debe usar otro draw
 
+	glActiveTexture(GL_TEXTURE0);
+	myTexture.Unbind();
 
+
+	
+
+	glActiveTexture(GL_TEXTURE0);
+	floorTexture.Bind();
 							  //cubo piso 
 	_shaderProgram.SetUniformMat3("normalsMatrix", glm::transpose(glm::inverse(glm::mat3(_transform1.GetModelMatrix()))));
 	_shaderProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()* _transform1.GetModelMatrix());
 	_shaderProgram.SetUniformVec3("cameraPosition", newCamera);
 	_shaderProgram.SetUniformMatrix("ModelMatrix", _transform1.GetModelMatrix());
 	_mesh.Draw(GL_TRIANGLES);
+
+	glActiveTexture(GL_TEXTURE0);
+	floorTexture.Unbind();
 
 
 	_shaderProgram.Deactivate();
@@ -219,6 +276,18 @@ void ReshapeWindow(int width, int height)
 
 int main(int argc, char* argv[])
 {
+	// Inicializar DevIL. Esto se debe hacer sólo una vez.
+	ilInit();
+	// Cambiar el punto de origen de las texturas. Por default, DevIL
+	// pone un punto de origen en la esquina superior izquierda.
+	// Esto es compatible con el sistema operativo, pero no con el
+	// funcionamiento de OpenGL.
+	ilEnable(IL_ORIGIN_SET);
+	// Configurar el punto de origen de las texturas en la esquina
+	// inferior izquierda
+	ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
+
+
 	// Inicializar freeglut
 	// Freeglut se encarga de crear una ventana
 	// en donde podemos dibujar

@@ -26,10 +26,13 @@ public:
 	void SetUniformf(std::string name, float value);
 	void SetUniformf(std::string name, float x, float y);
 	void SetUniformf(std::string name, float x, float y, float z);
+	void SetUniformf(std::string name, glm::vec3 value);
 	void SetUniformf(std::string name, float x, float y, float z, float w);
+	void SetUniformi(std::string name, int value);
+	void SetUniformMatrix(std::string name, glm::mat3 matrix);
 	void SetUniformMatrix(std::string name, glm::mat4 matrix);
 	void SetUniformVec3(std::string name, glm::vec3 vector);
-	void SetUniformMat3(std::string name, glm::mat3 matrix);
+    void SetUniformMat3(std::string name, glm::mat3 matrix);
 
 private:
 	void DeleteAndDetachShaders();
