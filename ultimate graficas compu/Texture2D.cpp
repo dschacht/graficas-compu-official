@@ -1,67 +1,50 @@
 #include "Texture2D.h"
 #include <IL/il.h>
-#include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <glm/glm.hpp>
-#include <string>
-#include <vector>
-#include <memory>
-
-
-
 
 Texture2D::Texture2D()
 {
-	_textureID = 0;
+	_textureId = 0;
 }
-
 
 Texture2D::~Texture2D()
 {
-	glDeleteTextures(1, &_textureID);
+	glDeleteTextures(1, &_textureId);
 }
 
-void Texture2D::Loadtexture(std::string path)
+void Texture2D::LoadTexture(std::string path)
 {
-
 	ILuint imageID;
-
 	ilGenImages(1, &imageID);
 	ilBindImage(imageID);
 	ilLoadImage(path.c_str());
 
-	
-	glGenTextures(1, &_textureID);
-	glBindTexture(GL_TEXTURE_2D, _textureID);
-	
+	glGenTextures(1, &_textureId);
+	glBindTexture(GL_TEXTURE_2D, _textureId);
+
+	//Filter
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER
-		, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S
-		, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//Wrap
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-
-		glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_FORMAT),
-			ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT),
-			0, ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_TYPE),
-			ilGetData());
-
-		ilBindImage(0);
-		ilDeleteImages(1, &imageID);
-
-
-
-
+	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_FORMAT),
+		ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT),
+		0, ilGetInteger(IL_IMAGE_FORMAT), ilGetInteger(IL_IMAGE_TYPE),
+		ilGetData());
+	glBindTexture(GL_TEXTURE_2D, 0);
+	ilBindImage(0);
+	ilDeleteImages(1, &imageID);
 }
 
 void Texture2D::Bind()
 {
-	glBindTexture(GL_TEXTURE_2D, _textureID);
+	//se quiere utilizar el textureId
+	glBindTexture(GL_TEXTURE_2D, _textureId);
 }
 
 void Texture2D::Unbind()
 {
+	//no se quiere utilizar el textureId
 	glBindTexture(GL_TEXTURE_2D, 0);
-
 }

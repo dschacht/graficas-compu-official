@@ -1,9 +1,13 @@
 
+/*********
+Kevin Asaf Alvarez Villarruel A01376017
+Isaac Hinojosa Padilla A01375843
+Daniel Schacht Luna A01169574
+******/
 
-#include <IL/il.h>
+#include <iostream>
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include <iostream>
 #include <glm/glm.hpp>
 #include <vector>
 #include "Camera.h"
@@ -11,261 +15,1023 @@
 #include "ShaderProgram.h"
 #include "Transform.h"
 #include "Texture2D.h"
+#include "Depthbuffer.h"
 
 Mesh _mesh;
+Mesh _palma;
+Mesh _falanges;
 ShaderProgram _shaderProgram;
-Transform _transform;
-Transform _transform1;
+ShaderProgram _shaderProgram2;
+ShaderProgram _shaderDepth;
+Transform _dedoindice1;
+Transform _dedomedio1;
+Transform _dedoanular1;
+Transform _dedopulgar1;
+Transform _dedoindice2;
+Transform _dedomedio2;
+Transform _dedoanular2;
+Transform _dedopulgar2;
+Transform _piso;
+Transform _palma1;
+Transform _dedoindice1joint;
+Transform _dedomedio1joint;
+Transform _dedoanular1joint;
+Transform _dedopulgar1joint;
+Transform _dedoindice2joint;
+Transform _dedomedio2joint;
+Transform _dedoanular2joint;
+Transform _dedopulgar2joint;
+
+
 Camera _camera;
-Texture2D myTexture;
-Texture2D floorTexture;
+Camera _lightC;
+Texture2D _texture;
+Texture2D _texture2;
+Texture2D _texture3;
+Depthbuffer _depth;
+
+
+
+float i = 0.0f;
+float ii = 0.0f;
+bool limite = true;
+
+
+
 
 void Initialize()
 {
+	//mesh_piso
 	std::vector<glm::vec3> positions;
-	//Frente 
+	//Cara Frente 
 	positions.push_back(glm::vec3(-3.0f, -3.0f, 3.0f)); //0
 	positions.push_back(glm::vec3(3.0f, -3.0f, 3.0f)); //1
 	positions.push_back(glm::vec3(3.0f, 3.0f, 3.0f)); //2
 	positions.push_back(glm::vec3(-3.0, 3.0f, 3.0f)); //3
-
-													  //Derecha
+													  //Cara Derecha
 	positions.push_back(glm::vec3(3.0f, -3.0f, 3.0f)); //4
 	positions.push_back(glm::vec3(3.0f, -3.0f, -3.0f)); //5
 	positions.push_back(glm::vec3(3.0f, 3.0f, -3.0f)); //6
 	positions.push_back(glm::vec3(3.0f, 3.0f, 3.0f)); //7
-
-													  //Izquierda 
+													  //Cara Izquierda 
 	positions.push_back(glm::vec3(-3.0f, -3.0f, -3.0f)); //8
 	positions.push_back(glm::vec3(-3.0f, -3.0f, 3.0f)); //9
 	positions.push_back(glm::vec3(-3.0f, 3.0f, 3.0f)); //10
 	positions.push_back(glm::vec3(-3.0f, 3.0f, -3.0f)); //11
-														//Atras 
+														//Cara Atras 
 	positions.push_back(glm::vec3(3.0f, -3.0f, -3.0f)); //12
 	positions.push_back(glm::vec3(-3.0f, -3.0f, -3.0f)); //13
 	positions.push_back(glm::vec3(-3.0f, 3.0f, -3.0f)); //14
 	positions.push_back(glm::vec3(3.0f, 3.0f, -3.0f)); //15
-
-													   //Arriba 
+													   //Cara Arriba 
 	positions.push_back(glm::vec3(-3.0f, 3.0f, 3.0f)); //16
 	positions.push_back(glm::vec3(3.0f, 3.0f, 3.0f)); //17
 	positions.push_back(glm::vec3(3.0f, 3.0f, -3.0f)); //18
 	positions.push_back(glm::vec3(-3.0f, 3.0f, -3.0f)); //19
-														//Abajo
+														//Cara Abajo
 	positions.push_back(glm::vec3(-3.0f, -3.0f, -3.0f)); //20
 	positions.push_back(glm::vec3(3.0f, -3.0f, -3.0f)); //21
 	positions.push_back(glm::vec3(3.0f, -3.0f, 3.0f)); //22
-	positions.push_back(glm::vec3(-3.0f, -3.0f, 3.0f));
+	positions.push_back(glm::vec3(-3.0f, -3.0f, 3.0f)); //23
 
-	// Arreglo de colores en el cpu
+
 	std::vector<glm::vec3> colors;
-
-	//Frente 
-	colors.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
-	colors.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
-	colors.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
-	colors.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
-	//Derecha
-	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-
-	//Izquierda 
-	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
-	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
-	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
-	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
-
-	//Atras
-	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
-	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
-	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
-	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
-
-	//Arriba
-	colors.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
-	colors.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
-	colors.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
-	colors.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
-
-	//Abajo
-	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-
-	std::vector<glm::vec3>Normals;
 	//Cara Frente 
-	Normals.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-	Normals.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-	Normals.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-	Normals.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
-	//Cara Derecha 
-	Normals.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-	Normals.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-	Normals.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
-	Normals.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	//Cara Derecha
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
 	//Cara Izquierda 
-	Normals.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
-	Normals.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
-	Normals.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
-	Normals.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
 	//Cara Atras
-	Normals.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
-	Normals.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
-	Normals.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
-	Normals.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	colors.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	//Cara Arriba
+	colors.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
+	colors.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
+	colors.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
+	colors.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
+	//Cara Abajo
+	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+
+	std::vector<unsigned int> indices = { 0, 1, 2, 0, 2, 3,
+		4, 5, 6, 4, 6, 7,
+		8, 9, 10, 8, 10, 11,
+		12,  13, 14, 12, 14, 15,
+		16, 17, 18, 16, 18, 19,
+		20, 21, 22, 20, 22, 23 };
+
+
+	std::vector<glm::vec3>Normal;
+	//Cara Frente 
+	Normal.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	Normal.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	Normal.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	Normal.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	//Cara Derecha 
+	Normal.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	Normal.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	Normal.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	Normal.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	//Cara Izquierda 
+	Normal.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	Normal.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	Normal.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	Normal.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	//Cara Atras
+	Normal.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	Normal.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	Normal.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	Normal.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
 	//Cara Arriba 
-	Normals.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
-	Normals.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
-	Normals.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
-	Normals.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	Normal.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	Normal.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	Normal.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	Normal.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
 	//Cara Abajo 
-	Normals.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
-	Normals.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
-	Normals.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
-	Normals.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	Normal.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	Normal.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	Normal.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	Normal.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
 
-
-	std::vector<glm::vec2> texCoords;
-
-	texCoords.push_back(glm::vec2(0.0f, 0.0f )); //0
-	texCoords.push_back(glm::vec2(1.0f, 0.0f )); //1
-	texCoords.push_back(glm::vec2(1.0f, 1.0f)); //2
-	texCoords.push_back(glm::vec2(0.0, 1.0f)); //3
-
-													  //Derecha
-	texCoords.push_back(glm::vec2(0.0f, 0.0f)); //0
-	texCoords.push_back(glm::vec2(1.0f, 0.0f)); //1
-	texCoords.push_back(glm::vec2(1.0f, 1.0f)); //2
-	texCoords.push_back(glm::vec2(0.0, 1.0f)); //3
-
-	texCoords.push_back(glm::vec2(0.0f, 0.0f)); //0
-	texCoords.push_back(glm::vec2(1.0f, 0.0f)); //1
-	texCoords.push_back(glm::vec2(1.0f, 1.0f)); //2
-	texCoords.push_back(glm::vec2(0.0, 1.0f)); //3
-														//Atras 
-	texCoords.push_back(glm::vec2(0.0f, 0.0f)); //0
-	texCoords.push_back(glm::vec2(1.0f, 0.0f)); //1
-	texCoords.push_back(glm::vec2(1.0f, 1.0f)); //2
-	texCoords.push_back(glm::vec2(0.0, 1.0f)); //3
-													   //Arriba 
-	texCoords.push_back(glm::vec2(0.0f, 0.0f)); //0
-	texCoords.push_back(glm::vec2(1.0f, 0.0f)); //1
-	texCoords.push_back(glm::vec2(1.0f, 1.0f)); //2
-	texCoords.push_back(glm::vec2(0.0, 1.0f)); //3
-														//Abajo
-	texCoords.push_back(glm::vec2(0.0f, 0.0f)); //0
-	texCoords.push_back(glm::vec2(1.0f, 0.0f)); //1
-	texCoords.push_back(glm::vec2(1.0f, 1.0f)); //2
-	texCoords.push_back(glm::vec2(0.0, 1.0f)); //3
-
-
-	std::vector<unsigned int> indices = { 0,1,2,0,2,3,
-		4,5,6,4,6,7,
-		8,9,10,8,10,11,
-		12,13,14,12,14,15,
-		16,17,18,16,18,19,
-		20,21,22,20,22,23 };
+	std::vector<glm::vec2>TexCoords;
+	//Cara Frente 
+	TexCoords.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Derecha
+	TexCoords.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Izquierda 
+	TexCoords.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Atras 
+	TexCoords.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Arriba 
+	TexCoords.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Abajo
+	TexCoords.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords.push_back(glm::vec2(0.0f, 1.0f));
 
 	_mesh.CreateMesh(24);
 	_mesh.SetIndices(indices, GL_STATIC_DRAW);
-
 	_mesh.SetPositionAttribute(positions, GL_STATIC_DRAW, 0);
 	_mesh.SetColorAttribute(colors, GL_STATIC_DRAW, 1);
-	_mesh.SetNormalsAttribute(Normals, GL_STATIC_DRAW, 2);
-	_mesh.SetTexCoordAttribute(texCoords, GL_STATIC_DRAW, 3);
+	_mesh.SetNormalAttribute(Normal, GL_STATIC_DRAW, 2);
+	_mesh.SetTexCoordAttribute(TexCoords, GL_STATIC_DRAW, 3);
+
+	//mesh_palma_mano
+	//mesh_piso
+	std::vector<glm::vec3> positions2;
+	//Cara Frente 
+	positions2.push_back(glm::vec3(-3.0f, -0.2f, 2.0f)); //0
+	positions2.push_back(glm::vec3(3.0f, -0.2f, 2.0f)); //1
+	positions2.push_back(glm::vec3(3.0f, 0.2f, 2.0f)); //2
+	positions2.push_back(glm::vec3(-3.0, 0.2f, 2.0f)); //3
+													   //Cara Derecha
+	positions2.push_back(glm::vec3(3.0f, -0.2f, 2.0f)); //4
+	positions2.push_back(glm::vec3(3.0f, -0.2f, -2.0f)); //5
+	positions2.push_back(glm::vec3(3.0f, 0.2f, -2.0f)); //6
+	positions2.push_back(glm::vec3(3.0f, 0.2f, 2.0f)); //7
+													   //Cara Izquierda 
+	positions2.push_back(glm::vec3(-3.0f, -0.2f, -2.0f)); //8
+	positions2.push_back(glm::vec3(-3.0f, -0.2f, 2.0f)); //9
+	positions2.push_back(glm::vec3(-3.0f, 0.2f, 2.0f)); //10
+	positions2.push_back(glm::vec3(-3.0f, 0.2f, -2.0f)); //11
+														 //Cara Atras 
+	positions2.push_back(glm::vec3(3.0f, -0.2f, -2.0f)); //12
+	positions2.push_back(glm::vec3(-3.0f, -0.2f, -2.0f)); //13
+	positions2.push_back(glm::vec3(-3.0f, 0.2f, -2.0f)); //14
+	positions2.push_back(glm::vec3(3.0f, 0.2f, -2.0f)); //15
+														//Cara Arriba 
+	positions2.push_back(glm::vec3(-3.0f, 0.2f, 2.0f)); //16
+	positions2.push_back(glm::vec3(3.0f, 0.2f, 2.0f)); //17
+	positions2.push_back(glm::vec3(3.0f, 0.2f, -2.0f)); //18
+	positions2.push_back(glm::vec3(-3.0f, 0.2f, -2.0f)); //19
+														 //Cara Abajo
+	positions2.push_back(glm::vec3(-3.0f, -0.2f, -2.0f)); //20
+	positions2.push_back(glm::vec3(3.0f, -0.2f, -2.0f)); //21
+	positions2.push_back(glm::vec3(3.0f, -0.2f, 2.0f)); //22
+	positions2.push_back(glm::vec3(-3.0f, -0.2f, 2.0f)); //23
+
+
+	std::vector<glm::vec3> colors2;
+	//Cara Frente 
+	colors2.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	colors2.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	colors2.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	colors2.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	//Cara Derecha
+	colors2.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors2.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors2.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors2.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	//Cara Izquierda 
+	colors2.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors2.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors2.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors2.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	//Cara Atras
+	colors2.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	colors2.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	colors2.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	colors2.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	//Cara Arriba
+	colors2.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
+	colors2.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
+	colors2.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
+	colors2.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
+	//Cara Abajo
+	colors2.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors2.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors2.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors2.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+
+	std::vector<unsigned int> indices2 = { 0, 1, 2, 0, 2, 3,
+		4, 5, 6, 4, 6, 7,
+		8, 9, 10, 8, 10, 11,
+		12,  13, 14, 12, 14, 15,
+		16, 17, 18, 16, 18, 19,
+		20, 21, 22, 20, 22, 23 };
+
+
+	std::vector<glm::vec3>Normal2;
+	//Cara Frente 
+	Normal2.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	Normal2.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	Normal2.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	Normal2.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	//Cara Derecha 
+	Normal2.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	Normal2.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	Normal2.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	Normal2.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	//Cara Izquierda 
+	Normal2.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	Normal2.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	Normal2.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	Normal2.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	//Cara Atras
+	Normal2.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	Normal2.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	Normal2.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	Normal2.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	//Cara Arriba 
+	Normal2.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	Normal2.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	Normal2.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	Normal2.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	//Cara Abajo 
+	Normal2.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	Normal2.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	Normal2.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	Normal2.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+
+	std::vector<glm::vec2>TexCoords2;
+	//Cara Frente 
+	TexCoords2.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords2.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords2.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords2.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Derecha
+	TexCoords2.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords2.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords2.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords2.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Izquierda 
+	TexCoords2.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords2.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords2.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords2.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Atras 
+	TexCoords2.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords2.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords2.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords2.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Arriba 
+	TexCoords2.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords2.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords2.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords2.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Abajo
+	TexCoords2.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords2.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords2.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords2.push_back(glm::vec2(0.0f, 1.0f));
+
+	_palma.CreateMesh(24);
+	_palma.SetIndices(indices2, GL_STATIC_DRAW);
+	_palma.SetPositionAttribute(positions2, GL_STATIC_DRAW, 0);
+	_palma.SetColorAttribute(colors2, GL_STATIC_DRAW, 1);
+	_palma.SetNormalAttribute(Normal2, GL_STATIC_DRAW, 2);
+	_palma.SetTexCoordAttribute(TexCoords2, GL_STATIC_DRAW, 3);
+
+	//mesh_falange
+	std::vector<glm::vec3> positions3;
+	//Cara Frente 
+	positions3.push_back(glm::vec3(-0.7f, -0.2f, 0.6f)); //0
+	positions3.push_back(glm::vec3(0.7f, -0.2f, 0.6f)); //1
+	positions3.push_back(glm::vec3(0.7f, 0.2f, 0.6f)); //2
+	positions3.push_back(glm::vec3(-0.7, 0.2f, 0.6f)); //3
+													   //Cara Derecha
+	positions3.push_back(glm::vec3(0.7f, -0.2f, 0.6f)); //4
+	positions3.push_back(glm::vec3(0.7f, -0.2f, -0.6f)); //5
+	positions3.push_back(glm::vec3(0.7f, 0.2f, -0.6f)); //6
+	positions3.push_back(glm::vec3(0.7f, 0.2f, 0.6f)); //7
+													   //Cara Izquierda 
+	positions3.push_back(glm::vec3(-0.7f, -0.2f, -0.6f)); //8
+	positions3.push_back(glm::vec3(-0.7f, -0.2f, 0.6f)); //9
+	positions3.push_back(glm::vec3(-0.7f, 0.2f, 0.6f)); //10
+	positions3.push_back(glm::vec3(-0.7f, 0.2f, -0.6f)); //11
+														 //Cara Atras 
+	positions3.push_back(glm::vec3(0.7f, -0.2f, -0.6f)); //12
+	positions3.push_back(glm::vec3(-0.7f, -0.2f, -0.6f)); //13
+	positions3.push_back(glm::vec3(-0.7f, 0.2f, -0.6f)); //14
+	positions3.push_back(glm::vec3(0.7f, 0.2f, -0.6f)); //15
+														//Cara Arriba 
+	positions3.push_back(glm::vec3(-0.7f, 0.2f, 0.6f)); //16
+	positions3.push_back(glm::vec3(0.7f, 0.2f, 0.6f)); //17
+	positions3.push_back(glm::vec3(0.7f, 0.2f, -0.6f)); //18
+	positions3.push_back(glm::vec3(-0.7f, 0.2f, -0.6f)); //19
+														 //Cara Abajo
+	positions3.push_back(glm::vec3(-0.7f, -0.2f, -0.6f)); //20
+	positions3.push_back(glm::vec3(0.7f, -0.2f, -0.6f)); //21
+	positions3.push_back(glm::vec3(0.7f, -0.2f, 0.6f)); //22
+	positions3.push_back(glm::vec3(-0.7f, -0.2f, 0.6f)); //23
+
+
+	std::vector<glm::vec3> colors3;
+	//Cara Frente 
+	colors3.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	colors3.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	colors3.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	colors3.push_back(glm::vec3(1.0f, 0.0f, 1.0f));
+	//Cara Derecha
+	colors3.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors3.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors3.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	colors3.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	//Cara Izquierda 
+	colors3.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors3.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors3.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	colors3.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	//Cara Atras
+	colors3.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	colors3.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	colors3.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	colors3.push_back(glm::vec3(1.0f, 1.0f, 0.0f));
+	//Cara Arriba
+	colors3.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
+	colors3.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
+	colors3.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
+	colors3.push_back(glm::vec3(0.0f, 1.0f, 1.0f));
+	//Cara Abajo
+	colors3.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors3.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors3.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	colors3.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+
+	std::vector<unsigned int> indices3 = { 0, 1, 2, 0, 2, 3,
+		4, 5, 6, 4, 6, 7,
+		8, 9, 10, 8, 10, 11,
+		12,  13, 14, 12, 14, 15,
+		16, 17, 18, 16, 18, 19,
+		20, 21, 22, 20, 22, 23 };
+
+
+	std::vector<glm::vec3>Normal3;
+	//Cara Frente 
+	Normal3.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	Normal3.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	Normal3.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	Normal3.push_back(glm::vec3(0.0f, 0.0f, 1.0f));
+	//Cara Derecha 
+	Normal3.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	Normal3.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	Normal3.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	Normal3.push_back(glm::vec3(1.0f, 0.0f, 0.0f));
+	//Cara Izquierda 
+	Normal3.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	Normal3.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	Normal3.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	Normal3.push_back(glm::vec3(-1.0f, 0.0f, 0.0f));
+	//Cara Atras
+	Normal3.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	Normal3.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	Normal3.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	Normal3.push_back(glm::vec3(0.0f, 0.0f, -1.0f));
+	//Cara Arriba 
+	Normal3.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	Normal3.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	Normal3.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	Normal3.push_back(glm::vec3(0.0f, 1.0f, 0.0f));
+	//Cara Abajo 
+	Normal3.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	Normal3.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	Normal3.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+	Normal3.push_back(glm::vec3(0.0f, -1.0f, 0.0f));
+
+	std::vector<glm::vec2>TexCoords3;
+	//Cara Frente 
+	TexCoords3.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords3.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords3.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords3.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Derecha
+	TexCoords3.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords3.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords3.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords3.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Izquierda 
+	TexCoords3.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords3.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords3.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords3.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Atras 
+	TexCoords3.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords3.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords3.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords3.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Arriba 
+	TexCoords3.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords3.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords3.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords3.push_back(glm::vec2(0.0f, 1.0f));
+	//Cara Abajo
+	TexCoords3.push_back(glm::vec2(0.0f, 0.0f));
+	TexCoords3.push_back(glm::vec2(1.0, 0.0f));
+	TexCoords3.push_back(glm::vec2(1.0f, 1.0f));
+	TexCoords3.push_back(glm::vec2(0.0f, 1.0f));
+
+	_falanges.CreateMesh(24);
+	_falanges.SetIndices(indices3, GL_STATIC_DRAW);
+	_falanges.SetPositionAttribute(positions3, GL_STATIC_DRAW, 0);
+	_falanges.SetColorAttribute(colors3, GL_STATIC_DRAW, 1);
+	_falanges.SetNormalAttribute(Normal3, GL_STATIC_DRAW, 2);
+	_falanges.SetTexCoordAttribute(TexCoords3, GL_STATIC_DRAW, 3);
+
+
+	_depth.Create(2048);
+	_lightC.SetPosition(-2.0f, 5.0f, 0.0f);
+	_lightC.SetRotation(-60.0f, 0.0f, 0.0f);
+	_lightC.SetOrthographic(60.0f, 1.0f);
+
+	_shaderDepth.CreateProgram();
+	_shaderDepth.AttachShader("Depth.vert", GL_VERTEX_SHADER);
+	_shaderDepth.AttachShader("Depth.frag", GL_FRAGMENT_SHADER);
+	_shaderDepth.SetAttribute(0, "VertexPosition");
+	_shaderDepth.LinkProgram();
+
+	//NORMAL
 	_shaderProgram.CreateProgram();
-	_shaderProgram.AttachShader("Phong.vert", GL_VERTEX_SHADER);
-	_shaderProgram.AttachShader("Phong.frag", GL_FRAGMENT_SHADER);
+
+	_shaderProgram.AttachShader("Shadow.vert", GL_VERTEX_SHADER);
+	_shaderProgram.AttachShader("Shadow.frag", GL_FRAGMENT_SHADER);
 	_shaderProgram.SetAttribute(0, "VertexPosition");
 	_shaderProgram.SetAttribute(1, "VertexColor");
-	_shaderProgram.SetAttribute(2, "VertexNormals");
+	_shaderProgram.SetAttribute(2, "VertexNormal");
 	_shaderProgram.SetAttribute(3, "VertexTexCoord");
 
-	myTexture.Loadtexture("caja.jpg");
-
-	floorTexture.Loadtexture("piso.jpg");
-
 	_shaderProgram.LinkProgram();
-	_shaderProgram.Deactivate();
+
 
 	_shaderProgram.Activate();
-	_shaderProgram.SetUniformVec3("LightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-	_shaderProgram.SetUniformVec3("LightPosition", glm::vec3(1.0f, 1.0f, 5.0f));
+	_shaderProgram.SetUniformf("LightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+	_shaderProgram.SetUniformf("LightPosition", _lightC.GetPosition());
 	_shaderProgram.SetUniformi("DiffuseTexture", 0);
+	_shaderProgram.SetUniformi("ShadowMap", 1);
 
 	_shaderProgram.Deactivate();
 
-	//primer cubo
-	_transform.SetScale(1.0f, 1.0f, 1.0f);
-	//segundo cubo 
-	_transform1.Translate(0.0f, -10.0f, 0.0f, false);
+	//COMBINADO
+	_shaderProgram2.CreateProgram();
 
-	_transform1.SetScale(15.0f, 0.2f, 15.0f);
+	_shaderProgram2.AttachShader("Shadow2.vert", GL_VERTEX_SHADER);
+	_shaderProgram2.AttachShader("Shadow2.frag", GL_FRAGMENT_SHADER);
+	_shaderProgram2.SetAttribute(0, "VertexPosition");
+	_shaderProgram2.SetAttribute(1, "VertexColor");
+	_shaderProgram2.SetAttribute(2, "VertexNormal");
+	_shaderProgram2.SetAttribute(3, "VertexTexCoord");
 
+	_shaderProgram2.LinkProgram();
+
+
+	_shaderProgram2.Activate();
+	_shaderProgram2.SetUniformf("LightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+	_shaderProgram2.SetUniformf("LightPosition", _lightC.GetPosition());
+	_shaderProgram2.SetUniformi("DiffuseTexture", 0);
+	_shaderProgram2.SetUniformi("DiffuseTexture2", 1);
+	_shaderProgram2.SetUniformi("ShadowMap", 2);
+	_shaderProgram2.Deactivate();
+
+
+	_texture.LoadTexture("CAJA.jpg");
+	_texture2.LoadTexture("KATAMARI.png");
+	_texture3.LoadTexture("PISO.jpg");
+
+	//dedoindice1joint
+	_dedoindice1joint.SetPosition(3.0f, 0.0f, 1.4f);
+
+	//dedoindice
+	_dedoindice1.SetPosition(0.9f, 0.0f, 0.0f);
+
+	//dedoindice2joint
+	_dedoindice2joint.SetPosition(0.7f, 0.0f, 0.0f);
+
+	//dedoindice2
+	_dedoindice2.SetPosition(1.0f, 0.0f, 0.0f);
+
+	//dedomediojoint
+	_dedomedio1joint.SetPosition(3.0f, 0.0f, 0.0f);
+
+	//dedomedio
+	_dedomedio1.SetPosition(0.9f, 0.0f, 0.0f);
+
+	//dedomedio2joint
+	_dedomedio2joint.SetPosition(0.7f, 0.0f, 0.0f);
+
+	//dedomedio2
+	_dedomedio2.SetPosition(1.0f, 0.0f, 0.0f);
+
+	//dedoanularjoint
+	_dedoanular1joint.SetPosition(3.0f, 0.0f, -1.4f);
+
+	//dedoanular
+	_dedoanular1.SetPosition(0.9f, 0.0f, 0.0f);
+
+	//dedoanular2joint
+	_dedoanular2joint.SetPosition(0.7f, 0.0f, 0.0f);
+
+	//dedoanular2
+	_dedoanular2.SetPosition(1.0f, 0.0f, 0.0f);
+
+	//dedopulgarjoint
+	_dedopulgar1joint.SetPosition(-2.2f, 0.0f, 2.0f);
+
+	//dedopulgar
+	_dedopulgar1.SetPosition(0.0f, 0.0f, 0.6f);
+
+	//dedopulgar2joint
+	_dedopulgar2joint.SetPosition(0.0f, 0.0f, 0.6f);
+
+	//dedopulgar2
+	_dedopulgar2.SetPosition(0.0f, 0.0f, 1.0f);
+
+	//piso
+	_piso.SetPosition(0.0f, -12.0f, 0.0f);
+	_piso.SetScale(10.0f, 3.0f, 10.0f);
+
+	//palma
+	_palma1.SetPosition(0.0f, 0.0f, 5.0f);
+	_palma1.Rotate(0.0f, 0.0f, 30.0f, true);
+
+	//_camera.SetOrthographic(1.0f, 1.0f); Esto convierte la cámara en 2D
 }
 
 void GameLoop()
 {
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //limpiamos el buffer de control y el de profundidad. Siempre hacerlo al inicio del frame
 
-
-	// Limpiamos el buffer de color y el buffer de profunidad.
-	// Siempre hacerlo al inicio del frame
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	_camera.SetPosition(0.0f, 0.0f, 25.0f);
+	_palma1.Rotate(0.0f, 0.2f, 0.0f, true);
 
-	_transform.Rotate(0.3f, 0.3f, 0.3f, true);
-	_shaderProgram.Activate(); //mandar informacion, activar shader
-	
+	//_dedoindice1joint.Rotate(0.0f, 0.0f, 1.0f,true);
 
-	
+
+	/*_transform.Rotate(0.04f, 0.04f, 0.04f, true);
+	*/
+
+	float rotacion = 0.5f + ii;
+
+
+	if (rotacion <= 80.0f && limite == true)
+	{
+		_dedoindice1joint.SetRotation(0.0f, 0.0f, rotacion);
+		_dedomedio1joint.SetRotation(0.0f, 0.0f, rotacion);
+		_dedoanular1joint.SetRotation(0.0f, 0.0f, rotacion);
+		_dedopulgar1joint.SetRotation(-rotacion, 0.0f, 0.0f);
+		_dedoindice2joint.SetRotation(0.0f, 0.0f, rotacion);
+		_dedomedio2joint.SetRotation(0.0f, 0.0f, rotacion);
+		_dedoanular2joint.SetRotation(0.0f, 0.0f, rotacion);
+		_dedopulgar2joint.SetRotation(-rotacion, 0.0f, 0.0f);
+
+		ii = ii + 0.5f;
+	}
+	else if (rotacion >= 80.0f && limite == true)
+	{
+		limite = false;
+	}
+	else if (rotacion >= 0.25f && limite == false)
+	{
+		_dedoindice1joint.SetRotation(0.0f, 0.0f, rotacion);
+		_dedomedio1joint.SetRotation(0.0f, 0.0f, rotacion);
+		_dedoanular1joint.SetRotation(0.0f, 0.0f, rotacion);
+		_dedopulgar1joint.SetRotation(-rotacion, 0.0f, 0.0f);
+		_dedoindice2joint.SetRotation(0.0f, 0.0f, rotacion);
+		_dedomedio2joint.SetRotation(0.0f, 0.0f, rotacion);
+		_dedoanular2joint.SetRotation(0.0f, 0.0f, rotacion);
+		_dedopulgar2joint.SetRotation(-rotacion, 0.0f, 0.0f);
+		ii = ii - 0.5f;
+	}
+	else if (rotacion <= 0.25f && limite == false)
+	{
+		limite = true;
+	}
+
+
+
+
+
+	//render1 
+	_depth.Bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	_shaderDepth.Activate();
+
+	//dedoindice
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _lightC.GetViewProjection()* (_palma1.GetModelMatrix()*_dedoindice1joint.GetModelMatrix()*_dedoindice1.GetModelMatrix()));
+	_falanges.Draw(GL_TRIANGLES);
+
+	//dedoindice2
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _lightC.GetViewProjection()* (_palma1.GetModelMatrix()*_dedoindice1joint.GetModelMatrix()*_dedoindice1.GetModelMatrix()*_dedoindice2joint.GetModelMatrix()*_dedoindice2.GetModelMatrix()));
+	_falanges.Draw(GL_TRIANGLES);
+
+
+	//dedomedio
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _lightC.GetViewProjection()* (_palma1.GetModelMatrix()*_dedomedio1joint.GetModelMatrix()*_dedomedio1.GetModelMatrix()));
+	_falanges.Draw(GL_TRIANGLES);
+
+
+	//dedomedio2
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _lightC.GetViewProjection()* (_palma1.GetModelMatrix()*_dedomedio1joint.GetModelMatrix()*_dedomedio1.GetModelMatrix()*_dedomedio2joint.GetModelMatrix()*_dedomedio2.GetModelMatrix()));
+	_falanges.Draw(GL_TRIANGLES);
+
+	//dedoanular
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _lightC.GetViewProjection()* (_palma1.GetModelMatrix()*_dedoanular1joint.GetModelMatrix()*_dedoanular1.GetModelMatrix()));
+	_falanges.Draw(GL_TRIANGLES);
+
+	//dedoanular2
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _lightC.GetViewProjection()* (_palma1.GetModelMatrix()*_dedoanular1joint.GetModelMatrix()*_dedoanular1.GetModelMatrix()*_dedoanular2joint.GetModelMatrix()*_dedoanular2.GetModelMatrix()));
+	_falanges.Draw(GL_TRIANGLES);
+
+	//dedopulgar
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _lightC.GetViewProjection()* (_palma1.GetModelMatrix()*_dedopulgar1joint.GetModelMatrix()*_dedopulgar1.GetModelMatrix()));
+	_falanges.Draw(GL_TRIANGLES);
+
+	//dedopulgar2
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _lightC.GetViewProjection()* (_palma1.GetModelMatrix()*_dedopulgar1joint.GetModelMatrix()*_dedopulgar1.GetModelMatrix()*_dedopulgar2joint.GetModelMatrix()*_dedopulgar2.GetModelMatrix()));
+	_falanges.Draw(GL_TRIANGLES);
+
+	//Piso
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _lightC.GetViewProjection()* _piso.GetModelMatrix());
+	_mesh.Draw(GL_TRIANGLES);
+
+	//palma
+	_shaderDepth.SetUniformMatrix("mvpMatrix", _lightC.GetViewProjection()* _palma1.GetModelMatrix());
+	_palma.Draw(GL_TRIANGLES);
+
+
+
+
+	_shaderDepth.Deactivate();
+	_depth.Unbind();
+	glViewport(0, 0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+
+
+	//render 2
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//dedoindice1
+	_shaderProgram2.Activate();
+
+	_shaderProgram2.SetUniformMatrix("normalMatrix", glm::transpose(glm::inverse(glm::mat3(_palma1.GetModelMatrix()*_dedoindice1joint.GetModelMatrix()*_dedoindice1.GetModelMatrix()))));
+	_shaderProgram2.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*(_palma1.GetModelMatrix()*_dedoindice1joint.GetModelMatrix()*_dedoindice1.GetModelMatrix()));
+
+	_shaderProgram2.SetUniformf("cameraPosition", _camera.GetPosition());
+	_shaderProgram2.SetUniformMatrix("ModelMatrix", _palma1.GetModelMatrix()*_dedoindice1joint.GetModelMatrix()*_dedoindice1.GetModelMatrix());
+	_shaderProgram2.SetUniformMatrix("LightVPMatrix", _lightC.GetViewProjection());
 
 	glActiveTexture(GL_TEXTURE0);
-	myTexture.Bind();
+	_texture.Bind();
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Bind();
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.BindDepthMap();
+
+	_falanges.Draw(GL_TRIANGLES);
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.UnbindDepthMap();
 
 
-							   //cubo chico
-	_shaderProgram.SetUniformMat3("normalsMatrix", glm::transpose(glm::inverse(glm::mat3(_transform.GetModelMatrix()))));
-	_shaderProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection() * _transform.GetModelMatrix()); //getmodelmatrix, donde esta que escala tiene que rotacion tiene
-	glm::vec3 newCamera = _camera.GetPosition();
-	_shaderProgram.SetUniformVec3("cameraPosition", newCamera);
-	_shaderProgram.SetUniformMatrix("ModelMatrix", _transform.GetModelMatrix());
-	_mesh.Draw(GL_TRIANGLES); //instruccion de dibujado, para hacer una nueva figura se debe usar otro draw
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Unbind();
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Unbind();
+
+	_shaderProgram2.Deactivate();
+
+	//dedoindice2
+	_shaderProgram2.Activate();
+
+	_shaderProgram2.SetUniformMatrix("normalMatrix", glm::transpose(glm::inverse(glm::mat3(_palma1.GetModelMatrix()*_dedoindice1joint.GetModelMatrix()*_dedoindice1.GetModelMatrix()*_dedoindice2joint.GetModelMatrix()*_dedoindice2.GetModelMatrix()))));
+	_shaderProgram2.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*(_palma1.GetModelMatrix()*_dedoindice1joint.GetModelMatrix()*_dedoindice1.GetModelMatrix()*_dedoindice2joint.GetModelMatrix()*_dedoindice2.GetModelMatrix()));
+
+	_shaderProgram2.SetUniformf("cameraPosition", _camera.GetPosition());
+	_shaderProgram2.SetUniformMatrix("ModelMatrix", _palma1.GetModelMatrix()*_dedoindice1joint.GetModelMatrix()*_dedoindice1.GetModelMatrix()*_dedoindice2joint.GetModelMatrix()*_dedoindice2.GetModelMatrix());
+	_shaderProgram2.SetUniformMatrix("LightVPMatrix", _lightC.GetViewProjection());
 
 	glActiveTexture(GL_TEXTURE0);
-	myTexture.Unbind();
+	_texture.Bind();
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Bind();
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.BindDepthMap();
+
+	_falanges.Draw(GL_TRIANGLES);
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.UnbindDepthMap();
 
 
-	
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Unbind();
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Unbind();
+
+	_shaderProgram2.Deactivate();
+
+	//dedomedio1
+	_shaderProgram2.Activate();
+
+	_shaderProgram2.SetUniformMatrix("normalMatrix", glm::transpose(glm::inverse(glm::mat3(_palma1.GetModelMatrix()*_dedomedio1joint.GetModelMatrix()*_dedomedio1.GetModelMatrix()))));
+	_shaderProgram2.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*(_palma1.GetModelMatrix()*_dedomedio1joint.GetModelMatrix()*_dedomedio1.GetModelMatrix()));
+
+	_shaderProgram2.SetUniformf("cameraPosition", _camera.GetPosition());
+	_shaderProgram2.SetUniformMatrix("ModelMatrix", _palma1.GetModelMatrix()*_dedomedio1joint.GetModelMatrix()*_dedomedio1.GetModelMatrix());
+	_shaderProgram2.SetUniformMatrix("LightVPMatrix", _lightC.GetViewProjection());
 
 	glActiveTexture(GL_TEXTURE0);
-	floorTexture.Bind();
-							  //cubo piso 
-	_shaderProgram.SetUniformMat3("normalsMatrix", glm::transpose(glm::inverse(glm::mat3(_transform1.GetModelMatrix()))));
-	_shaderProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()* _transform1.GetModelMatrix());
-	_shaderProgram.SetUniformVec3("cameraPosition", newCamera);
-	_shaderProgram.SetUniformMatrix("ModelMatrix", _transform1.GetModelMatrix());
+	_texture.Bind();
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Bind();
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.BindDepthMap();
+
+	_falanges.Draw(GL_TRIANGLES);
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.UnbindDepthMap();
+
+
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Unbind();
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Unbind();
+
+	_shaderProgram2.Deactivate();
+
+	//dedomedio2
+	_shaderProgram2.Activate();
+
+	_shaderProgram2.SetUniformMatrix("normalMatrix", glm::transpose(glm::inverse(glm::mat3(_palma1.GetModelMatrix()*_dedomedio1joint.GetModelMatrix()*_dedomedio1.GetModelMatrix()*_dedomedio2joint.GetModelMatrix()*_dedomedio2.GetModelMatrix()))));
+	_shaderProgram2.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*(_palma1.GetModelMatrix()*_dedomedio1joint.GetModelMatrix()*_dedomedio1.GetModelMatrix()*_dedomedio2joint.GetModelMatrix()*_dedomedio2.GetModelMatrix()));
+
+	_shaderProgram2.SetUniformf("cameraPosition", _camera.GetPosition());
+	_shaderProgram2.SetUniformMatrix("ModelMatrix", _palma1.GetModelMatrix()*_dedomedio1joint.GetModelMatrix()*_dedomedio1.GetModelMatrix()*_dedomedio2joint.GetModelMatrix()*_dedomedio2.GetModelMatrix());
+	_shaderProgram2.SetUniformMatrix("LightVPMatrix", _lightC.GetViewProjection());
+
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Bind();
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Bind();
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.BindDepthMap();
+
+	_falanges.Draw(GL_TRIANGLES);
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.UnbindDepthMap();
+
+
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Unbind();
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Unbind();
+
+	_shaderProgram2.Deactivate();
+
+	//dedoanular1
+	_shaderProgram2.Activate();
+
+	_shaderProgram2.SetUniformMatrix("normalMatrix", glm::transpose(glm::inverse(glm::mat3(_palma1.GetModelMatrix()*_dedoanular1joint.GetModelMatrix()*_dedoanular1.GetModelMatrix()))));
+	_shaderProgram2.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*(_palma1.GetModelMatrix()*_dedoanular1joint.GetModelMatrix()*_dedoanular1.GetModelMatrix()));
+
+	_shaderProgram2.SetUniformf("cameraPosition", _camera.GetPosition());
+	_shaderProgram2.SetUniformMatrix("ModelMatrix", _palma1.GetModelMatrix()*_dedoanular1joint.GetModelMatrix()*_dedoanular1.GetModelMatrix());
+	_shaderProgram2.SetUniformMatrix("LightVPMatrix", _lightC.GetViewProjection());
+
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Bind();
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Bind();
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.BindDepthMap();
+
+	_falanges.Draw(GL_TRIANGLES);
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.UnbindDepthMap();
+
+
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Unbind();
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Unbind();
+
+	_shaderProgram2.Deactivate();
+
+	//anular2
+	_shaderProgram2.Activate();
+
+	_shaderProgram2.SetUniformMatrix("normalMatrix", glm::transpose(glm::inverse(glm::mat3(_palma1.GetModelMatrix()*_dedoanular1joint.GetModelMatrix()*_dedoanular1.GetModelMatrix()*_dedoanular2joint.GetModelMatrix()*_dedoanular2.GetModelMatrix()))));
+	_shaderProgram2.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*(_palma1.GetModelMatrix()*_dedoanular1joint.GetModelMatrix()*_dedoanular1.GetModelMatrix()*_dedoanular2joint.GetModelMatrix()*_dedoanular2.GetModelMatrix()));
+
+	_shaderProgram2.SetUniformf("cameraPosition", _camera.GetPosition());
+	_shaderProgram2.SetUniformMatrix("ModelMatrix", _palma1.GetModelMatrix()*_dedoanular1joint.GetModelMatrix()*_dedoanular1.GetModelMatrix()*_dedoanular2joint.GetModelMatrix()*_dedoanular2.GetModelMatrix());
+	_shaderProgram2.SetUniformMatrix("LightVPMatrix", _lightC.GetViewProjection());
+
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Bind();
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Bind();
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.BindDepthMap();
+
+	_falanges.Draw(GL_TRIANGLES);
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.UnbindDepthMap();
+
+
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Unbind();
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Unbind();
+
+	_shaderProgram2.Deactivate();
+
+	//dedopulgar1
+	_shaderProgram2.Activate();
+
+	_shaderProgram2.SetUniformMatrix("normalMatrix", glm::transpose(glm::inverse(glm::mat3(_palma1.GetModelMatrix()*_dedopulgar1joint.GetModelMatrix()*_dedopulgar1.GetModelMatrix()))));
+	_shaderProgram2.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*(_palma1.GetModelMatrix()*_dedopulgar1joint.GetModelMatrix()*_dedopulgar1.GetModelMatrix()));
+
+	_shaderProgram2.SetUniformf("cameraPosition", _camera.GetPosition());
+	_shaderProgram2.SetUniformMatrix("ModelMatrix", _palma1.GetModelMatrix()*_dedopulgar1joint.GetModelMatrix()*_dedopulgar1.GetModelMatrix());
+	_shaderProgram2.SetUniformMatrix("LightVPMatrix", _lightC.GetViewProjection());
+
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Bind();
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Bind();
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.BindDepthMap();
+
+	_falanges.Draw(GL_TRIANGLES);
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.UnbindDepthMap();
+
+
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Unbind();
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Unbind();
+
+	_shaderProgram2.Deactivate();
+
+	//pulgar2
+	_shaderProgram2.Activate();
+
+	_shaderProgram2.SetUniformMatrix("normalMatrix", glm::transpose(glm::inverse(glm::mat3(_palma1.GetModelMatrix()*_dedopulgar1joint.GetModelMatrix()*_dedopulgar1.GetModelMatrix()*_dedopulgar2joint.GetModelMatrix()*_dedopulgar2.GetModelMatrix()))));
+	_shaderProgram2.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()*(_palma1.GetModelMatrix()*_dedopulgar1joint.GetModelMatrix()*_dedopulgar1.GetModelMatrix()*_dedopulgar2joint.GetModelMatrix()*_dedopulgar2.GetModelMatrix()));
+
+	_shaderProgram2.SetUniformf("cameraPosition", _camera.GetPosition());
+	_shaderProgram2.SetUniformMatrix("ModelMatrix", _palma1.GetModelMatrix()*_dedopulgar1joint.GetModelMatrix()*_dedopulgar1.GetModelMatrix()*_dedopulgar2joint.GetModelMatrix()*_dedopulgar2.GetModelMatrix());
+	_shaderProgram2.SetUniformMatrix("LightVPMatrix", _lightC.GetViewProjection());
+
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Bind();
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Bind();
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.BindDepthMap();
+
+	_falanges.Draw(GL_TRIANGLES);
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.UnbindDepthMap();
+
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Unbind();
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Unbind();
+
+	_shaderProgram2.Deactivate();
+
+	//PISO
+	_shaderProgram.Activate();
+	_shaderProgram.SetUniformMatrix("normalMatrix", glm::transpose(glm::inverse(glm::mat3(_piso.GetModelMatrix()))));
+	_shaderProgram.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()* _piso.GetModelMatrix());
+
+	_shaderProgram.SetUniformf("cameraPosition", _camera.GetPosition());
+	_shaderProgram.SetUniformMatrix("ModelMatrix", _piso.GetModelMatrix());
+	_shaderProgram.SetUniformMatrix("LightVPMatrix", _lightC.GetViewProjection());
+
+	glActiveTexture(GL_TEXTURE0);
+	_texture3.Bind();
+	glActiveTexture(GL_TEXTURE1);
+	_depth.BindDepthMap();
+
 	_mesh.Draw(GL_TRIANGLES);
 
 	glActiveTexture(GL_TEXTURE0);
-	floorTexture.Unbind();
-
+	_texture3.Unbind();
+	glActiveTexture(GL_TEXTURE1);
+	_depth.UnbindDepthMap();
 
 	_shaderProgram.Deactivate();
 
-	// Cuando terminamos de renderear, cambiamos los buffers.
-	glutSwapBuffers();
+	//palma
+	_shaderProgram2.Activate();
+
+	_shaderProgram2.SetUniformMatrix("normalMatrix", glm::transpose(glm::inverse(glm::mat3(_palma1.GetModelMatrix()))));
+	_shaderProgram2.SetUniformMatrix("mvpMatrix", _camera.GetViewProjection()* _palma1.GetModelMatrix());
+
+	_shaderProgram2.SetUniformf("cameraPosition", _camera.GetPosition());
+	_shaderProgram2.SetUniformMatrix("ModelMatrix", _palma1.GetModelMatrix());
+	_shaderProgram2.SetUniformMatrix("LightVPMatrix", _lightC.GetViewProjection());
+
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Bind();
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Bind();
+	glActiveTexture(GL_TEXTURE2);
+	_depth.BindDepthMap();
+
+	_palma.Draw(GL_TRIANGLES);
+
+	glActiveTexture(GL_TEXTURE2);
+	_depth.UnbindDepthMap();
+	glActiveTexture(GL_TEXTURE1);
+	_texture2.Unbind();
+	glActiveTexture(GL_TEXTURE0);
+	_texture.Unbind();
+
+	_shaderProgram2.Deactivate();
+
+	glutSwapBuffers(); //Cuando terminamos de renderear cambiamos los buffers 
 }
+
 
 void Idle()
 {
-	// Cuando OpenGL entra en modo de reposo 
-	// (para guardar bateria, por ejemplo)
-	// le decimos que vuelva a dibujar ->
-	// Vuelve a mandar a llamar GameLoop
 	glutPostRedisplay();
 }
 
@@ -276,76 +1042,32 @@ void ReshapeWindow(int width, int height)
 
 int main(int argc, char* argv[])
 {
-	// Inicializar DevIL. Esto se debe hacer sólo una vez.
-	ilInit();
-	// Cambiar el punto de origen de las texturas. Por default, DevIL
-	// pone un punto de origen en la esquina superior izquierda.
-	// Esto es compatible con el sistema operativo, pero no con el
-	// funcionamiento de OpenGL.
-	ilEnable(IL_ORIGIN_SET);
-	// Configurar el punto de origen de las texturas en la esquina
-	// inferior izquierda
-	ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
 
-
-	// Inicializar freeglut
-	// Freeglut se encarga de crear una ventana
-	// en donde podemos dibujar
 	glutInit(&argc, argv);
-	// Solicitando una versión específica de OpenGL.
-	glutInitContextVersion(4, 4);
-	// Iniciar el contexto de OpenGL. El contexto se refiere
-	// a las capacidades que va a tener nuestra aplicación
-	// gráfica.
-	// En este caso estamos trabajando con el pipeline programable.
+	glutInitContextVersion(4, 5);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
-	// Freeglut nos permite configurar eventos que ocurren en la ventana.
-	// Un evento que nos interesa es cuando alguien cierra la ventana.
-	// En este caso, simplemente dejamos de renderear la esscena y terminamos el programa.
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
-	// Configuramos el framebuffer. En este caso estamos solicitando un buffer
-	// true color RGBA, un buffer de profundidad y un segundo buffer para renderear.
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
-	// Iniciar las dimensiones de la ventana (en pixeles)
-	glutInitWindowSize(500, 500);
-	// Creamos la ventana y le damos un título.
+	glutInitWindowSize(400, 400);
 	glutCreateWindow("Hello World GL");
-	// Asociamos una función de render.
-	//Esta función se mandará a llamar para dibujar un frame.
 	glutDisplayFunc(GameLoop);
-	// Asociamos una función para el cambio de resolución
-	// de la ventana. Freeglut la va a mandar a llamar
-	// cuando alguien cambie el tamaño de la venta.
 	glutReshapeFunc(ReshapeWindow);
-	// Asociamos la función que se mandará a llamar
-	// cuando OpenGL entre en modo de reposo.
 	glutIdleFunc(Idle);
-
-	// Inicializar GLEW. Esta librería se encarga de obtener el API de OpenGL de
-	// nuestra tarjeta de video. SHAME ON YOU MICROSOFT.
 	glewInit();
 
-	// Configurar OpenGL. Este es el color por default del buffer de color
-	// en el framebuffer.
 	glClearColor(1.0f, 1.0f, 0.5f, 1.0f);
-	// Ademas de solicitar el buffer de profundidad, tenemos
-	// que decirle a OpenGL que lo queremos activo
 	glEnable(GL_DEPTH_TEST);
-	// Activamos el borrado de caras traseras.
-	// Ahora todos los triangulos que dibujemos deben estar en CCW
 	glEnable(GL_CULL_FACE);
-	// No dibujar las caras traseras de las geometrías.
 	glCullFace(GL_BACK);
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
-	// Configuración inicial de nuestro programa.
-	Initialize();
+	ilInit();
+	ilEnable(IL_ORIGIN_SET);
+	ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
 
-	// Iniciar la aplicación. El main se pausará en esta línea hasta que se cierre
-	// la venta de OpenGL.
+	Initialize();
 	glutMainLoop();
 
 	return 0;
 }
-	

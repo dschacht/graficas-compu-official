@@ -45,6 +45,9 @@
     <ClCompile Include="Texture2D.cpp">
       <Filter>Archivos de código fuente</Filter>
     </ClCompile>
+    <ClCompile Include="Depthbuffer.cpp">
+      <Filter>Archivos de código fuente</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="circle.h">
@@ -74,6 +77,9 @@
     <ClInclude Include="Texture2D.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Depthbuffer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ultimate graficas compu.rc">
@@ -97,6 +103,36 @@
       <Filter>Archivos de recursos\Shaders</Filter>
     </None>
     <None Include="Phong.vert">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="Depth.vert">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="Depth.frag">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="Shadow.frag">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="Shadow.vert">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="Shadow2.frag">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="Shadow2.vert">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="TextureMapping.frag">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="TextureMapping.vert">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="TextureMapping2.frag">
+      <Filter>Archivos de recursos\Shaders</Filter>
+    </None>
+    <None Include="TextureMapping2.vert">
       <Filter>Archivos de recursos\Shaders</Filter>
     </None>
   </ItemGroup>

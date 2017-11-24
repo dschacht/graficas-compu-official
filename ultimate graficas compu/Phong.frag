@@ -1,45 +1,37 @@
 ﻿#version 330
-in vec3 InterpolatedColor;
-in vec3 InterpolatedNormals;
-in vec3 PixelPosition;
-in vec2 InterpolatedTexCoord;
 
+in vec3 InterpolatedColor; 
+in vec3 PixelPosition;
+in vec3 InterpolatedNormal;
+
+uniform vec3 LightColor;
+uniform vec3 LightPosition; 
+uniform vec3 cameraPosition;
 
 out vec4 FragColor;
 
-uniform vec3 LightColor;
-uniform vec3 LightPosition;
-uniform vec3 cameraPosition;
-uniform sampler2D DiffuseTexture;
-  
 
-void main ()  
-{  
+void main()
+{
+	vec3 ambiente = 0.1f * LightColor;
+	vec3 normal = normalize(InterpolatedNormal);
+	vec3 lightDirection = normalize(LightPosition - PixelPosition);
+	float a = dot(normal, lightDirection);
+	if (a < 0.0f){
+		a = 0.0f;
+	}
+	vec3 difusa = a * LightColor;
+	vec3 reflejo = reflect (-lightDirection, normal);
+	vec3 vista = normalize(cameraPosition - PixelPosition);
 
-   //calculate Ambient Term:  
-   
-   vec3 ambient = 0.1f*LightColor;
+	float b = dot(reflejo, vista);
+	if (b < 0.0f){
+		b = 0.0f;
+	}
 
-   vec3 normals = normalize(InterpolatedNormals);
-   vec3 lightDirection = normalize(LightPosition - PixelPosition);
-   float p = dot(normals, lightDirection);
-   if(p< 0.0f){
-   p= 0.0f;
-   }
-   vec3 difuse= p*LightColor;
-   vec3 reflection =reflect (-lightDirection, normals);
-   vec3 view= normalize(cameraPosition-PixelPosition);
+	vec3 especular = 0.5f * pow(b,32)  * LightColor;
 
-   float w = dot(reflection, view);
-   if(w<0.0f){
-   w= 0.0f;
-   }
-
-   vec3 specular = 0.5f * pow(w,32)*LightColor;
-   vec3 phongShading = (ambient +difuse + specular)* vec3 (texture2D(DiffuseTexture, InterpolatedTexCoord));
-
-  
-   FragColor = vec4 (phongShading,1.0f);
-   
+	vec3 phongShading = (ambiente + difusa + especular) * InterpolatedColor;
+	FragColor = vec4(phongShading, 1.0f);
+	
 }
-          
